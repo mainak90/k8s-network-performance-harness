@@ -31,18 +31,28 @@ beautifully to stdout and csv and into html graphs.
 
 ### Outputs
 
+This will output in 3 different formats.
+1. `Stdout`: It outputs test reports directly in stdout.
+2. `csv`: It outputs results in csv format, one csv file per pod in cluster.
+3. `graph`: It generates html formatted graphs per csv generated.
+
 The stdout result looks like this --> 
 ```
+#####    Output from pod netperf-pod-4nrgf for netperf test in TCP_CRR mode      #####
+                       Podname                                           p50     90       p99    Trans/s
+================================================================        =====   =====   =====   =======
+netperf-pod-77c9846498-jmzg6                                             79      202     286     7966.47
+netperf-pod-77c9846498-qdl69                                             192     227     385     5409.66
+#####    Output from pod netperf-pod-77c9846498-jmzg6 for netperf test in TCP_CRR mode   #####
                        Podname                                           p50     90       p99    Trans/s
 ================================================================        =====   =====   =====   =======
 netperf-pod-4nrgf                                                        79      199     300     8211.83
 netperf-pod-77c9846498-qdl69                                             79      131     248     10240.09
-#####    Output from pod netperf-pod-77c9846498-qdl69 for netperf test in TCP_RR mode    #####
+#####    Output from pod netperf-pod-77c9846498-qdl69 for netperf test in TCP_CRR mode   #####
                        Podname                                           p50     90       p99    Trans/s
 ================================================================        =====   =====   =====   =======
 netperf-pod-4nrgf                                                        80      180     286     8987.86
 netperf-pod-77c9846498-jmzg6                                             194     250     452     5337.32
-
 ```
 
 The output CSVs look like this
