@@ -43,6 +43,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: test-helm-chart
-        uses: mati92/helm-kubeval-action@master
+        uses: matiaszilli/helm-kubeval-action@master
         with:
           path: ./deploy/helm
