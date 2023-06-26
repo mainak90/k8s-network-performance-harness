@@ -38,11 +38,12 @@ jobs:
       - name: Build Code Test
         run: go build ./...
 
-  kubeval:
+  helm-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: test-helm-chart
-        uses: matiaszilli/helm-kubeval-action@master
-        with:
-          path: ./deploy/helm
+      - name: helm-check
+        uses: igabaydulin/helm-check-action@0.1.4
+        env:
+          CHART_LOCATION: ./deploy/helm
+          CHART_VALUES: ./deploy/helm/values.yaml
