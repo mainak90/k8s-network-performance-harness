@@ -9,10 +9,10 @@ build-linux: # Builds the perftest cli but only for linux
 build: # Builds the perftest cli but only for macos
 	GOOS=darwin GOARCH=amd64 go build -o bin/perftest main.go
 
-kubernetes: # this should output a valid Kubernetes spec for your web service, this assumes that kubectl binary is installed.
-	kubectl apply -f deploy/manifests/perftest.yaml
-	kubectl rollout status deployment netperf-pod
-	kubectl rollout status daemonset netperf-pod
+kubernetes: # Assumes that kubectl binary is installed. Please pass in make kubernetes namespace=<namespace to use custom ns>
+	kubectl apply -f deploy/manifests/perftest.yaml -n $(NS)
+	kubectl rollout status deployment netperf-pod -n $(NS)
+	kubectl rollout status daemonset netperf-pod -n $(NS)
 
 helm-vet:
 	make helm-lint
