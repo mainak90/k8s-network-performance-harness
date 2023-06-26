@@ -21,7 +21,7 @@ func RunNetPerf(client *kubernetes.Clientset, mode string, host string, time str
 	return utils.StripNetPerfOutputTCP(stdo), nil
 }
 
-func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool) {
+func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string) {
 	logging.InfoLog("Running pod-to-pod across cluster in TCP_RR mode")
 	var netpTcpRR = make(map[string][][]string)
 	var netpTcpCRR = make(map[string][][]string)
@@ -49,9 +49,9 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool) {
 			generator.RenderChart(fmt.Sprintf("%s_TCP_RR.csv", pod), "TCP_RR")
 		}
 	}
-	if stdo {
-		utils.NetPerfOutPut(netpTcpRR, "TCP_RR")
-	}
+
+	utils.NetPerfOutPut(netpTcpRR, "TCP_RR", outfile)
+
 	logging.InfoLog("Running netperf pod-to-pod across cluster in TCP_CRR mode")
 	for _, pod := range deploy.Pods {
 		podIp, ok := deploy.PodIPMap[pod]
@@ -75,9 +75,9 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool) {
 			generator.RenderChart(fmt.Sprintf("%s_TCP_CRR.csv", pod), "TCP_CRR")
 		}
 	}
-	if stdo {
-		utils.NetPerfOutPut(netpTcpRR, "TCP_CRR")
-	}
+
+	utils.NetPerfOutPut(netpTcpRR, "TCP_CRR", outfile)
+
 }
 
 func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string) (string, error) {
@@ -90,7 +90,7 @@ func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string
 	return utils.StripIperfOutput(stdo), nil
 }
 
-func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool) {
+func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string) {
 	logging.InfoLog("Running iperf pod-to-pod across cluster")
 	var IperfMap = make(map[string][][]string)
 	var iperf = []string{}
@@ -116,27 +116,30 @@ func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool) {
 			generator.RenderChart(fmt.Sprintf("%s_iperf.csv", pod), "iperf")
 		}
 	}
-	if stdo {
-		utils.IPerfOutPut(IperfMap)
-	}
+
+	utils.IPerfOutPut(IperfMap, outfile)
+
 }
 
-func RunCmds(deploy k8s.Podlist, cmds string, stdo bool, graph bool) {
+func RunCmds(deploy k8s.Podlist, cmds string, stdo bool, graph bool, outfile string) {
 	set := utils.MakeCmdSet(cmds)
 	for _, cmd := range set {
 		switch cmd {
 		case "all":
 			logging.InfoLog("Running all tests...")
-			RunNetPerfSets(deploy, stdo, graph)
-			RunIperfSets(deploy, stdo, graph)
+			RunNetPerfSets(deploy, stdo, graph, outfile)
+			RunIperfSets(deploy, stdo, graph, outfile)
 		case "iperf":
 			logging.InfoLog("Running IPerf tests...")
-			RunIperfSets(deploy, stdo, graph)
+			RunIperfSets(deploy, stdo, graph, outfile)
 		case "netperf":
 			logging.InfoLog("Running NetPerf tests...")
-			RunNetPerfSets(deploy, stdo, graph)
+			RunNetPerfSets(deploy, stdo, graph, outfile)
 		default:
 			logging.ErrLog(fmt.Sprintf("Command %s not valid. Valid commands to pass are all or iperf/netperf or netperf,iperf", cmd))
 		}
+	}
+	if stdo {
+		utils.ReadAndPurge(outfile)
 	}
 }
