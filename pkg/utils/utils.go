@@ -38,7 +38,7 @@ func ReadAndPurge(filename string) {
 	file, err := os.Open(filename)
 
 	if err != nil {
-		logging.ErrLog(fmt.Sprintf("Error opening final outputfile %s %s", file, err.Error()))
+		logging.ErrLog(fmt.Sprintf("Error opening final outputfile %s %s", filename, err.Error()))
 	}
 
 	defer file.Close()
@@ -50,7 +50,7 @@ func ReadAndPurge(filename string) {
 	}
 
 	if err := os.Remove(filename); err != nil {
-		logging.ErrLog(fmt.Sprintf("Error deleting tmp file %s %s", file, err.Error()))
+		logging.ErrLog(fmt.Sprintf("Error deleting tmp file %s %s", filename, err.Error()))
 	}
 }
 

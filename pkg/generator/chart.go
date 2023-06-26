@@ -15,7 +15,7 @@ func readCSV(file string) ([]string, error) {
 	var fileLines []string
 	readFile, err := os.Open(file)
 	if err != nil {
-		logging.ErrLog("Error opening file %s Error %s", file, err.Error())
+		logging.ErrLog(fmt.Sprintf("Error opening file %s Error %s", file, err.Error()))
 		return nil, err
 	}
 	fileScanner := bufio.NewScanner(readFile)
@@ -40,7 +40,7 @@ func SplitIPerfGraphItems(filename string) ([]string, []opts.BarData) {
 		labels = append(labels, strings.Split(line, ",")[0])
 		gBit, err := strconv.ParseFloat(strings.Split(line, ",")[1], 64)
 		if err != nil {
-			logging.ErrLog(fmt.Sprintf("Error while converting to float %v", strings.Split(line, ",")[1], err.Error()))
+			logging.ErrLog(fmt.Sprintf("Error while converting to float %v Error %s", strings.Split(line, ",")[1], err.Error()))
 		}
 		gBits = append(gBits, opts.BarData{Value: gBit, Label: &label})
 	}
@@ -63,22 +63,22 @@ func SplitNetPerfGraphItems(filename string) ([]string, []opts.BarData, []opts.B
 		labels = append(labels, strings.Split(line, ",")[0])
 		p50, err := strconv.ParseFloat(strings.Split(line, ",")[1], 64)
 		if err != nil {
-			logging.ErrLog(fmt.Sprintf("Error while converting to float %v", strings.Split(line, ",")[1], err.Error()))
+			logging.ErrLog(fmt.Sprintf("Error while converting to float %v Error %s", strings.Split(line, ",")[1], err.Error()))
 		}
 		p50s = append(p50s, opts.BarData{Value: p50, Label: &label})
 		p90, err := strconv.ParseFloat(strings.Split(line, ",")[2], 64)
 		if err != nil {
-			logging.ErrLog(fmt.Sprintf("Error while converting to float %v", strings.Split(line, ",")[2], err.Error()))
+			logging.ErrLog(fmt.Sprintf("Error while converting to float %v Error %s", strings.Split(line, ",")[2], err.Error()))
 		}
 		p90s = append(p90s, opts.BarData{Value: p90, Label: &label})
 		p99, err := strconv.ParseFloat(strings.Split(line, ",")[3], 64)
 		if err != nil {
-			logging.ErrLog(fmt.Sprintf("Error while converting to float %v", strings.Split(line, ",")[3], err.Error()))
+			logging.ErrLog(fmt.Sprintf("Error while converting to float %v Error %s", strings.Split(line, ",")[3], err.Error()))
 		}
 		p99s = append(p99s, opts.BarData{Value: p99, Label: &label})
 		trans, err := strconv.ParseFloat(strings.Split(line, ",")[4], 64)
 		if err != nil {
-			logging.ErrLog(fmt.Sprintf("Error while converting to float %v", strings.Split(line, ",")[4], err.Error()))
+			logging.ErrLog(fmt.Sprintf("Error while converting to float %v Error %s", strings.Split(line, ",")[4], err.Error()))
 		}
 		transs = append(transs, opts.BarData{Value: trans, Label: &label})
 	}
