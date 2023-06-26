@@ -65,3 +65,31 @@ netperf-pod-77c9846498-qdl69,328,519,1157,2584.05
 The output graphs(html formatted looks the part)
 
 ![img.png](img/img.png)
+
+### Build the project locally
+
+Project uses makefiles. 
+1. To build project 
+```
+make build
+# Or
+make build-linux
+```
+2. Deploy manifests raw
+```
+make kubernetes
+# Or to deploy to custom namespace
+make kubernetes namespace=<namespace>
+```
+
+3. Deploy manifests via helm
+```
+make helm
+# Or to deploy to custom namespace
+make helm namespace=<namespace>
+```
+
+4. Test charts
+```
+make helm-vet
+```

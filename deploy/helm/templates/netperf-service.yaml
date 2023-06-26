@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  labels:
+    {{- toYaml .Values.service.labels | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: iperf-tcp
+      protocol: TCP
+      port: {{ .Values.service.ports.iperf }}
+      targetPort: {{ .Values.service.ports.iperf }}
+    - name: iperf-udp
+      protocol: UDP
+      port: {{ .Values.service.ports.iperf }}
+      targetPort: {{ .Values.service.ports.iperf }}
+    - name: fortio-http
+      protocol: TCP
+      port: {{ .Values.service.ports.http }}
+      targetPort: {{ .Values.service.ports.http }}
+    - name: fortio-proxy
+      protocol: TCP
+      port: {{ .Values.service.ports.proxy }}
+      targetPort: {{ .Values.service.ports.proxy }}
+    - name: fortio-grpc
+      protocol: TCP
+      port: {{ .Values.service.ports.grpc }}
+      targetPort: {{ .Values.service.ports.grpc }}
+  selector:
+    {{- toYaml .Values.service.selector | nindent 4 }}

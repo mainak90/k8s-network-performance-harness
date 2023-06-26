@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Values.daemonSet.server.name }}
+  {{- if .Values.daemonSet.server.labels }}
+  labels:
+  {{ toYaml .Values.daemonSet.server.labels }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+  {{ toYaml .Values.daemonSet.server.selectorLabels }}
+  template:
+    metadata:
+      labels:
+    {{- toYaml .Values.daemonSet.server.selectorLabels | nindent 8 }}
+    spec:
+      {{- with .Values.daemonSet.server.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.daemonSet.server.name }}
+          image: "{{ .Values.daemonSet.server.image.repository }}:{{ .Values.daemonSet.server.image.tag }}"
+          ports:
+            - containerPort: 5001
+            - containerPort: 8079
+            - containerPort: 8080
+            - containerPort: 8081
+            - containerPort: 12865

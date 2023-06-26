@@ -7,6 +7,7 @@ import (
 	"github.com/mainak90/perftest/cmd"
 	"github.com/mainak90/perftest/pkg/k8s"
 	"github.com/mainak90/perftest/pkg/logging"
+	"github.com/mainak90/perftest/pkg/utils"
 	"os"
 )
 
@@ -33,7 +34,10 @@ func main() {
 
 	pl.PodListFromService(context.TODO(),"netperf-server", *nameSpace)
 
-	cmd.RunCmds(pl, *run, *sout, *generateGraph)
+	outfile := utils.GetFileName(*sout)
+
+	cmd.RunCmds(pl, *run, *sout, *generateGraph, outfile)
+
 }
 
 
