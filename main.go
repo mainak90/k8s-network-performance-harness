@@ -36,7 +36,7 @@ func main() {
 
 	outfile := utils.GetFileName(*sout)
 
-	cmd.RunCmds(pl, *run, *sout, *generateGraph, outfile)
+	cmd.RunCmds(pl, *run, *sout, *generateGraph, outfile, *nameSpace)
 
 }
 

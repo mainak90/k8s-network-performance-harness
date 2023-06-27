@@ -11,9 +11,9 @@ import (
 )
 
 
-func RunNetPerf(client *kubernetes.Clientset, mode string, host string, time string, pod string) (string, error) {
+func RunNetPerf(client *kubernetes.Clientset, mode string, host string, time string, pod string, namespace string) (string, error) {
 	netperfcmd := fmt.Sprintf("netperf -H %s -l %s -P 1 -t %s -- -r 32,1024 -o P50_LATENCY,P90_LATENCY,P99_LATENCY,THROUGHPUT,THROUGHPUT_UNITS", host, time, mode)
-	stdo, _, err := k8s.Exec(client, netperfcmd, "default", pod)
+	stdo, _, err := k8s.Exec(client, netperfcmd, namespace, pod)
 	if err != nil {
 		logging.ErrLog(fmt.Sprintf("Error executing exec command %s Error %s", netperfcmd, err.Error()))
 		return "", fmt.Errorf(err.Error())
@@ -21,7 +21,7 @@ func RunNetPerf(client *kubernetes.Clientset, mode string, host string, time str
 	return utils.StripNetPerfOutputTCP(stdo), nil
 }
 
-func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string) {
+func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string, namespace string) {
 	logging.InfoLog("Running pod-to-pod across cluster in TCP_RR mode")
 	var netpTcpRR = make(map[string][][]string)
 	var netpTcpCRR = make(map[string][][]string)
@@ -35,7 +35,7 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string) {
 		}
 		for _, ip := range deploy.PodIps {
 			if ip != podIp {
-				result, err := RunNetPerf(deploy.ClientSet, "TCP_RR", ip, "2", pod)
+				result, err := RunNetPerf(deploy.ClientSet, "TCP_RR", ip, "2", pod, namespace)
 				if err != nil {
 					logging.ErrLog(fmt.Sprintf("Encountered error while running netperf on pod %s %s", pod, err.Error()))
 				}
@@ -61,7 +61,7 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string) {
 		}
 		for _, ip := range deploy.PodIps {
 			if ip != podIp {
-				result, err := RunNetPerf(deploy.ClientSet, "TCP_CRR", ip, "2", pod)
+				result, err := RunNetPerf(deploy.ClientSet, "TCP_CRR", ip, "2", pod, namespace)
 				if err != nil {
 					logging.ErrLog(fmt.Sprintf("Encountered error while running netperf on pod %s %s", pod, err.Error()))
 				}
@@ -80,9 +80,9 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string) {
 
 }
 
-func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string) (string, error) {
+func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string, namespace string) (string, error) {
 	IPerfCmd := fmt.Sprintf("iperf -c %s -i 1 -t %s", host, time)
-	stdo, _, err := k8s.Exec(client, IPerfCmd, "default", pod)
+	stdo, _, err := k8s.Exec(client, IPerfCmd, namespace, pod)
 	if err != nil {
 		logging.ErrLog(fmt.Sprintf("Error executing exec command %s Error %s", IPerfCmd, err.Error()))
 		return "", fmt.Errorf(err.Error())
@@ -90,7 +90,7 @@ func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string
 	return utils.StripIperfOutput(stdo), nil
 }
 
-func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string) {
+func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string, namespace string) {
 	logging.InfoLog("Running iperf pod-to-pod across cluster")
 	var IperfMap = make(map[string][][]string)
 	var iperf = []string{}
@@ -102,7 +102,7 @@ func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string) {
 		}
 		for _, ip := range deploy.PodIps {
 			if ip != podIp {
-				result, err := RunIPerf(deploy.ClientSet, ip, "2", pod)
+				result, err := RunIPerf(deploy.ClientSet, ip, "2", pod, namespace)
 				if err != nil {
 					logging.ErrLog(fmt.Sprintf("Encountered error while running netperf on pod %s %s", pod, err.Error()))
 				}
@@ -121,20 +121,20 @@ func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string) {
 
 }
 
-func RunCmds(deploy k8s.Podlist, cmds string, stdo bool, graph bool, outfile string) {
+func RunCmds(deploy k8s.Podlist, cmds string, stdo bool, graph bool, outfile string, namespace string) {
 	set := utils.MakeCmdSet(cmds)
 	for _, cmd := range set {
 		switch cmd {
 		case "all":
 			logging.InfoLog("Running all tests...")
-			RunNetPerfSets(deploy, stdo, graph, outfile)
-			RunIperfSets(deploy, stdo, graph, outfile)
+			RunNetPerfSets(deploy, stdo, graph, outfile, namespace)
+			RunIperfSets(deploy, stdo, graph, outfile, namespace)
 		case "iperf":
 			logging.InfoLog("Running IPerf tests...")
-			RunIperfSets(deploy, stdo, graph, outfile)
+			RunIperfSets(deploy, stdo, graph, outfile, namespace)
 		case "netperf":
 			logging.InfoLog("Running NetPerf tests...")
-			RunNetPerfSets(deploy, stdo, graph, outfile)
+			RunNetPerfSets(deploy, stdo, graph, outfile, namespace)
 		default:
 			logging.ErrLog(fmt.Sprintf("Command %s not valid. Valid commands to pass are all or iperf/netperf or netperf,iperf", cmd))
 		}
