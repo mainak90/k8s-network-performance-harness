@@ -19,7 +19,7 @@ service:
     grpc: 8079
 
 image:
-  repository: leannet/k8s-netperf
+  repository: docker.io/mainak90/perftest
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"

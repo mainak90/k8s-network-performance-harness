@@ -24,7 +24,7 @@ spec:
           image: "{{ .Values.daemonSet.server.image.repository }}:{{ .Values.daemonSet.server.image.tag }}"
           ports:
             - containerPort: 5001
-            - containerPort: 8079
-            - containerPort: 8080
-            - containerPort: 8081
+{{/*            - containerPort: 8079*/}}
+{{/*            - containerPort: 8080*/}}
+{{/*            - containerPort: 8081*/}}
             - containerPort: 12865
