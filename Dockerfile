@@ -35,9 +35,6 @@ RUN chmod 744 run.sh
 
 EXPOSE 5001/udp
 EXPOSE 5001/tcp
-EXPOSE 8079/tcp
-EXPOSE 8080/tcp
-EXPOSE 8081/tcp
 EXPOSE 12865/tcp
 
 ENTRYPOINT ["./run.sh"]

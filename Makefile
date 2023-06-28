@@ -7,7 +7,7 @@ build-linux: # Builds the perftest cli but only for linux
 	GOOS=linux GOARCH=amd64 go build -o bin/perftest main.go
 
 build: # Builds the perftest cli but only for macos
-	GOOS=darwin GOARCH=amd64 go build -o bin/perftest main.go
+	GOOS=darwin GOARCH=arm64 go build -o bin/perftest main.go
 
 kubernetes: # Assumes that kubectl binary is installed. Please pass in make kubernetes namespace=<namespace to use custom ns>
 	kubectl apply -f deploy/manifests/perftest.yaml -n $(NS)

@@ -16,14 +16,15 @@ spec:
     spec:
       containers:
         - name: netperf-pod
-          image: leannet/k8s-netperf:latest
+          image: docker.io/mainak90/perftest:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5001
-            - containerPort: 8079
-            - containerPort: 8080
-            - containerPort: 8081
+#            - containerPort: 8079
+#            - containerPort: 8080
+#            - containerPort: 8081
             - containerPort: 12865
-          #imagePullPolicy: Never
+          imagePullPolicy: Always
 
 ---
 
@@ -83,12 +84,10 @@ spec:
           effect: NoSchedule
       containers:
         - name: netperf-pod
-          image: leannet/k8s-netperf:latest
+          image: docker.io/mainak90/perftest:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5001
-            - containerPort: 8079
-            - containerPort: 8080
-            - containerPort: 8081
             - containerPort: 12865
 
 ---
@@ -115,10 +114,8 @@ spec:
           effect: NoSchedule
       containers:
         - name: netperf-host
-          image: leannet/k8s-netperf:latest
+          image: docker.io/mainak90/perftest:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5001
-            - containerPort: 8079
-            - containerPort: 8080
-            - containerPort: 8081
             - containerPort: 12865
