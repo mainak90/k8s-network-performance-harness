@@ -108,7 +108,7 @@ func GenerateIperfResult(deploy k8s.Podlist, hostip string, podname string, name
 		logging.ErrLog(fmt.Sprintf("Encountered error while running iperf on pod %s %s", podname, err.Error()))
 	}
 	testResultSet = append(testResultSet, result)
-	csvLine := utils.NetperfGenerateCSVLines(deploy.IPPodMap[hostip], result)
+	csvLine := utils.IperfGenerateCSVLines(deploy.IPPodMap[hostip], result)
 	netout[podname] = append(netout[podname], strings.Split(csvLine, ","))
 	generator.WriteCSV(podname, "iperf", csvLine)
 }

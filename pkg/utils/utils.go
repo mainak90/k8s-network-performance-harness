@@ -69,22 +69,23 @@ func StripIperfOutput(str string) string {
 }
 
 func NetperfGenerateCSVLines(pod string, units string) string {
+	logging.WarnLog(fmt.Sprintf("Splitting units %s", units))
 	elements := strings.Split(units, ",")
 	p50iter, err := strconv.Atoi(strings.ReplaceAll(strings.ReplaceAll(elements[0], "\r", ""), "\n", ""))
 	if err != nil {
-		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf %v", err.Error()))
+		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf for pod %s %v", pod, err.Error()))
 	}
 	p90iter, err := strconv.Atoi(elements[1])
 	if err != nil {
-		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf %v", err.Error()))
+		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf for pod %s %v", pod, err.Error()))
 	}
 	p99iter, err := strconv.Atoi(elements[2])
 	if err != nil {
-		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf %v", err.Error()))
+		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf for pod %s %v", pod, err.Error()))
 	}
 	transiter, err := strconv.ParseFloat(elements[3], 64)
 	if err != nil {
-		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf %v", err.Error()))
+		logging.ErrLog(fmt.Sprintf("Encountered errors while generating CSV lines for netperf for pod %s %v", pod, err.Error()))
 	}
 	return fmt.Sprintf("%s,%v,%v,%v,%v", pod, p50iter, p90iter, p99iter, transiter)
 }
