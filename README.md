@@ -1,4 +1,4 @@
-# Perftest
+# Perftest [![](https://github.com/mainak90/k8s-network-performance-harness/workflows/build/badge.svg)](https://github.com/mainak90/k8s-network-performance-harness/actions)
 
 This is a simple but functional testing tool to measure the network performance of a kubernetes cluster.
 It uses K8s-SIG approved network performance tools.
