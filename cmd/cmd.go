@@ -43,7 +43,7 @@ func RunNetPerfSets(deploy k8s.Podlist, graph bool, outfile string, namespace st
 		}
 	}
 	utils.NetPerfOutPut(netpTcpRR, "TCP_RR", outfile)
-	utils.NetPerfOutPut(netpTcpRR, "TCP_CRR", outfile)
+	utils.NetPerfOutPut(netpTcpCRR, "TCP_CRR", outfile)
 }
 
 func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string, namespace string) (string, error) {
