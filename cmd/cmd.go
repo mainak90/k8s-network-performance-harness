@@ -33,10 +33,10 @@ func RunNetPerfSets(deploy k8s.Podlist, graph bool, outfile string, namespace st
 			continue
 		}
 		var wg1, wg2 sync.WaitGroup
-		wg1.Add(len(deploy.PodIps) - 1)
-		wg2.Add(len(deploy.PodIps) - 1)
 		for _, ip := range deploy.PodIps {
 			if ip != podIp {
+				wg1.Add(1)
+				wg2.Add(1)
 				go GenerateNetperfResult(deploy, "TCP_RR", ip, pod, namespace, tcp_rr, netpTcpRR, &wg1)
 				go GenerateNetperfResult(deploy, "TCP_CRR", ip, pod, namespace, tcp_crr, netpTcpCRR, &wg2)
 			}
@@ -73,9 +73,9 @@ func RunIperfSets(deploy k8s.Podlist, graph bool, outfile string, namespace stri
 			continue
 		}
 		var wg sync.WaitGroup
-		wg.Add(len(deploy.PodIps) - 1)
 		for _, ip := range deploy.PodIps {
 			if ip != podIp {
+				wg.Add(1)
 				go GenerateIperfResult(deploy, ip, pod, namespace, iperf, IperfMap, &wg)
 			}
 		}
