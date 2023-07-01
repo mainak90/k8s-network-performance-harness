@@ -13,10 +13,10 @@ import (
 
 func main() {
 	var (
-		run = flag.String("run", "all", "The tests to run in a comma seperated fashion")
+		ns            = flag.String("namespace", "default", "The k8s namespace where the netperf server runs")
+		run           = flag.String("run", "all", "The tests to run in a comma seperated fashion")
 		generateGraph = flag.Bool("graph", true, "Generate graph output?")
-		sout = flag.Bool("stdout", true, "Output results to stdout")
-		nameSpace = flag.String("namespace", "default", "The k8s namespace where the netperf server runs")
+		sout          = flag.Bool("stdout", true, "Output results to stdout")
 	)
 
 	flag.Parse()
@@ -30,14 +30,12 @@ func main() {
 
 	pl.Client()
 
-	logging.InfoLog(fmt.Sprintf("Trigerred command with params run %s stdout %v graph %v", *run, *sout, *generateGraph))
+	logging.InfoLog(fmt.Sprintf("Trigerred command with params run %s stdout %v graph %v namespace %s", *run, *sout, *generateGraph, *ns))
 
-	pl.PodListFromService(context.TODO(),"netperf-server", *nameSpace)
+	pl.PodListFromService(context.TODO(), "netperf-server", *ns)
 
 	outfile := utils.GetFileName(*sout)
 
-	cmd.RunCmds(pl, *run, *sout, *generateGraph, outfile, *nameSpace)
+	cmd.RunCmds(pl, *run, *sout, *generateGraph, outfile, *ns)
 
 }
-
-
