@@ -10,7 +10,6 @@ import (
 	"strings"
 )
 
-
 func RunNetPerf(client *kubernetes.Clientset, mode string, host string, time string, pod string, namespace string) (string, error) {
 	netperfcmd := fmt.Sprintf("netperf -H %s -l %s -P 1 -t %s -- -r 32,1024 -o P50_LATENCY,P90_LATENCY,P99_LATENCY,THROUGHPUT,THROUGHPUT_UNITS", host, time, mode)
 	stdo, _, err := k8s.Exec(client, netperfcmd, namespace, pod)
@@ -21,7 +20,7 @@ func RunNetPerf(client *kubernetes.Clientset, mode string, host string, time str
 	return utils.StripNetPerfOutputTCP(stdo), nil
 }
 
-func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string, namespace string) {
+func RunNetPerfSets(deploy k8s.Podlist, graph bool, outfile string, namespace string) {
 	logging.InfoLog("Running pod-to-pod across cluster in TCP_RR mode")
 	var netpTcpRR = make(map[string][][]string)
 	var netpTcpCRR = make(map[string][][]string)
@@ -40,9 +39,9 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string, n
 					logging.ErrLog(fmt.Sprintf("Encountered error while running netperf on pod %s %s", pod, err.Error()))
 				}
 				tcp_rr = append(tcp_rr, result)
-				csvLine := utils.NetperfGenerateCSVLines(deploy.IPPodMap[ip],result)
+				csvLine := utils.NetperfGenerateCSVLines(deploy.IPPodMap[ip], result)
 				netpTcpRR[pod] = append(netpTcpRR[pod], strings.Split(csvLine, ","))
-				generator.WriteCSV(pod, "TCP_RR",csvLine)
+				generator.WriteCSV(pod, "TCP_RR", csvLine)
 			}
 		}
 		if graph {
@@ -66,9 +65,9 @@ func RunNetPerfSets(deploy k8s.Podlist, stdo bool, graph bool, outfile string, n
 					logging.ErrLog(fmt.Sprintf("Encountered error while running netperf on pod %s %s", pod, err.Error()))
 				}
 				tcp_crr = append(tcp_crr, result)
-				csvLine := utils.NetperfGenerateCSVLines(deploy.IPPodMap[ip],result)
+				csvLine := utils.NetperfGenerateCSVLines(deploy.IPPodMap[ip], result)
 				netpTcpCRR[pod] = append(netpTcpCRR[pod], strings.Split(csvLine, ","))
-				generator.WriteCSV(pod, "TCP_CRR",csvLine)
+				generator.WriteCSV(pod, "TCP_CRR", csvLine)
 			}
 		}
 		if graph {
@@ -90,7 +89,7 @@ func RunIPerf(client *kubernetes.Clientset, host string, time string, pod string
 	return utils.StripIperfOutput(stdo), nil
 }
 
-func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string, namespace string) {
+func RunIperfSets(deploy k8s.Podlist, graph bool, outfile string, namespace string) {
 	logging.InfoLog("Running iperf pod-to-pod across cluster")
 	var IperfMap = make(map[string][][]string)
 	var iperf = []string{}
@@ -107,9 +106,9 @@ func RunIperfSets(deploy k8s.Podlist,  stdo bool, graph bool, outfile string, na
 					logging.ErrLog(fmt.Sprintf("Encountered error while running netperf on pod %s %s", pod, err.Error()))
 				}
 				iperf = append(iperf, result)
-				csvLine := utils.IperfGenerateCSVLines(deploy.IPPodMap[ip],result)
+				csvLine := utils.IperfGenerateCSVLines(deploy.IPPodMap[ip], result)
 				IperfMap[pod] = append(IperfMap[pod], strings.Split(csvLine, ","))
-				generator.WriteCSV(pod, "iperf",csvLine)
+				generator.WriteCSV(pod, "iperf", csvLine)
 			}
 		}
 		if graph {
@@ -127,14 +126,14 @@ func RunCmds(deploy k8s.Podlist, cmds string, stdo bool, graph bool, outfile str
 		switch cmd {
 		case "all":
 			logging.InfoLog("Running all tests...")
-			RunNetPerfSets(deploy, stdo, graph, outfile, namespace)
-			RunIperfSets(deploy, stdo, graph, outfile, namespace)
+			RunNetPerfSets(deploy, graph, outfile, namespace)
+			RunIperfSets(deploy, graph, outfile, namespace)
 		case "iperf":
 			logging.InfoLog("Running IPerf tests...")
-			RunIperfSets(deploy, stdo, graph, outfile, namespace)
+			RunIperfSets(deploy, graph, outfile, namespace)
 		case "netperf":
 			logging.InfoLog("Running NetPerf tests...")
-			RunNetPerfSets(deploy, stdo, graph, outfile, namespace)
+			RunNetPerfSets(deploy, graph, outfile, namespace)
 		default:
 			logging.ErrLog(fmt.Sprintf("Command %s not valid. Valid commands to pass are all or iperf/netperf or netperf,iperf", cmd))
 		}
